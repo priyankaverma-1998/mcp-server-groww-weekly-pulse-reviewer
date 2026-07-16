@@ -185,15 +185,15 @@ def google_docs_append(
 if __name__ == "__main__":
     import os
     
-    logger.info("Starting Google Workspace MCP Server...")
+    print("Starting Google Workspace MCP Server...", flush=True)
     
-    # Railway automatically sets the PORT environment variable.
-    # If it's set, we use SSE transport for remote connections.
-    port = os.environ.get("PORT")
+    # Force SSE transport for Railway
+    port = os.environ.get("PORT", "8000")
+    print(f"Using PORT: {port}", flush=True)
     
-    if port:
-        logger.info(f"PORT environment variable found ({port}). Starting with SSE transport on 0.0.0.0...")
+    try:
+        print(f"Starting FastMCP on 0.0.0.0:{port}...", flush=True)
         mcp.run(transport="sse")
-    else:
-        logger.info("No PORT environment variable found. Starting with stdio transport...")
-        mcp.run()
+    except Exception as e:
+        print(f"CRITICAL ERROR STARTING SERVER: {e}", flush=True)
+        raise
