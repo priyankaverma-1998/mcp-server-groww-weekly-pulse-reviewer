@@ -57,8 +57,20 @@ def get_google_credentials() -> Credentials:
     """
     creds = None
 
-    # Try to load existing token
-    if os.path.exists(TOKEN_PATH):
+    # Try to load token from environment variable (for Railway deployment)
+    token_json_str = os.getenv("GOOGLE_TOKEN_JSON")
+    if token_json_str:
+        try:
+            import json
+            token_info = json.loads(token_json_str)
+            creds = Credentials.from_authorized_user_info(token_info, ALL_SCOPES)
+            logger.info("Loaded token from GOOGLE_TOKEN_JSON environment variable")
+        except Exception as e:
+            logger.warning("Failed to load token from GOOGLE_TOKEN_JSON: %s", e)
+            creds = None
+            
+    # Fallback to loading from file if env var is not present
+    if not creds and os.path.exists(TOKEN_PATH):
         try:
             creds = Credentials.from_authorized_user_file(TOKEN_PATH, ALL_SCOPES)
             logger.info("Loaded existing token from %s", TOKEN_PATH)
