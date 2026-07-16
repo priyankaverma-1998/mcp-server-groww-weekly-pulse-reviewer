@@ -7,7 +7,7 @@ A generic, agent-agnostic **MCP (Model Context Protocol) server** that exposes G
 | `gmail_send_email` | Send or draft emails via Gmail |
 | `google_docs_append` | Append plain text or markdown to a Google Doc |
 
-Built with [FastMCP](https://github.com/modelcontextprotocol/python-sdk) — any MCP-compatible client (Claude Desktop, Cursor, custom agents) can discover and invoke these tools automatically.
+Built with [FastMCP](https://github.com/modelcontextprotocol/python-sdk) — any MCP-compatible client (Claude Desktop, Cursor, custom agents) can discover and invoke these tools automatically..
 
 ---
 
