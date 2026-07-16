@@ -47,13 +47,19 @@ logger = logging.getLogger(__name__)
 # ---------------------------------------------------------------------------
 # Create the MCP Server
 # ---------------------------------------------------------------------------
+import os
+
+port = os.environ.get("PORT", "8000")
 mcp = FastMCP(
     "google-workspace-mcp",
+    host="0.0.0.0",
+    port=int(port),
     instructions=(
         "MCP server that provides Gmail and Google Docs tools. "
         "Send/draft emails and append content to Google Docs."
     ),
 )
+
 
 
 # ---------------------------------------------------------------------------
@@ -186,8 +192,8 @@ if __name__ == "__main__":
     port = os.environ.get("PORT")
     
     if port:
-        logger.info(f"PORT environment variable found ({port}). Starting with SSE transport...")
-        mcp.run(transport="sse", port=int(port))
+        logger.info(f"PORT environment variable found ({port}). Starting with SSE transport on 0.0.0.0...")
+        mcp.run(transport="sse")
     else:
         logger.info("No PORT environment variable found. Starting with stdio transport...")
         mcp.run()

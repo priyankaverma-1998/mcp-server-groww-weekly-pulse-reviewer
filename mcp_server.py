@@ -175,6 +175,24 @@ def google_docs_append(
 
 
 # ---------------------------------------------------------------------------
+# FastAPI App for Vercel Serverless Deployment
+# ---------------------------------------------------------------------------
+from fastapi import FastAPI
+from contextlib import asynccontextmanager
+
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    async with mcp.session_manager.run():
+        yield
+
+app = FastAPI(lifespan=lifespan)
+app.mount("/mcp", mcp.streamable_http_app())
+
+@app.get("/")
+def health():
+    return {"status": "ok", "server": "google-workspace-mcp"}
+
+# ---------------------------------------------------------------------------
 # Entry point (Local Dev)
 # ---------------------------------------------------------------------------
 if __name__ == "__main__":

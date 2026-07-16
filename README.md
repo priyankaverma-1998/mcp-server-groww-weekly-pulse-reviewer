@@ -220,46 +220,52 @@ pytest tests/test_integration.py -v -m integration
 
 ---
 
-## Deploy to Vercel
+## Deploy to Railway
 
-This server can be deployed to [Vercel](https://vercel.com) using **Streamable HTTP** transport. The project includes a Vercel-ready entrypoint (`api/index.py`) and config (`vercel.json`).
+This server can be deployed to [Railway](https://railway.app) for remote access via SSE transport.
 
-### Step 1: Deploy with Vercel CLI
+### Step 1: Push to GitHub
 
 ```bash
-# Install Vercel CLI if you haven't already
-npm i -g vercel
-
-# Deploy the project
-vercel
+git init
+git add .
+git commit -m "Initial commit: MCP server for Gmail & Google Docs"
+git remote add origin https://github.com/<YOUR_USERNAME>/<REPO_NAME>.git
+git branch -M main
+git push -u origin main
 ```
 
-Follow the prompts to link to your GitHub repo or create a new Vercel project. Vercel will automatically detect the Python environment.
+### Step 2: Create Railway Project
 
-### Step 2: Set Environment Variables
+1. Go to [railway.app](https://railway.app) → sign in
+2. **New Project** → **Deploy from GitHub Repo** → select your repo
+3. Railway will auto-detect the `Procfile` and start deploying
 
-In the Vercel dashboard → Project Settings → **Environment Variables**:
+### Step 3: Set Environment Variables
+
+In Railway dashboard → your service → **Variables** tab:
 
 | Variable | Value |
 |----------|-------|
-| `GOOGLE_TOKEN_JSON` | *Paste the entire contents of your local `token.json` file* |
+| `GOOGLE_TOKEN_JSON` | *Paste the entire contents of your local `token.json`* |
+| `MCP_TRANSPORT` | `sse` |
 
-After adding the environment variables, **redeploy** the project (e.g., using `vercel --prod` or triggering a new deployment from the dashboard) to apply the variables.
+> **Note:** Railway automatically sets `PORT`. The server detects this and switches to SSE transport.
 
-### Step 3: Connect Your Agent
+### Step 4: Connect Your Agent
 
-After deploy, your Streamable HTTP MCP endpoint will be:
+After deploy, Railway provides a public URL. Your SSE endpoint is:
 
 ```
-https://your-app-name.vercel.app/mcp
+https://your-app.railway.app/sse
 ```
 
-**Claude Desktop** config (replace `your-app-name` with your actual Vercel URL):
+**Claude Desktop** (remote SSE):
 ```json
 {
   "mcpServers": {
     "google-workspace": {
-      "url": "https://your-app-name.vercel.app/mcp"
+      "url": "https://your-app.railway.app/sse"
     }
   }
 }
