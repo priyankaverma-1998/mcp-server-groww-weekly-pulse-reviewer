@@ -1,0 +1,35 @@
+# Google OAuth credentials (never commit these)
+credentials.json
+token.json
+
+# Client secret files
+tests/client_secret_*.json
+
+# Environment variables
+.env
+
+# Python
+__pycache__/
+*.pyc
+*.pyo
+*.egg-info/
+dist/
+build/
+.eggs/
+.pytest_cache/
+
+# Virtual environment
+venv/
+.venv/
+env/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+.agents/
+
+# OS
+.DS_Store
+Thumbs.db
