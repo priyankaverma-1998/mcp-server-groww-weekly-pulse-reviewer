@@ -1,1 +1,1 @@
-web: python server.py
+web: PYTHONUNBUFFERED=1 python server.py
