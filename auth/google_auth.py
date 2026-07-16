@@ -15,6 +15,7 @@ Usage:
 
 import os
 import sys
+import json
 import logging
 
 # Accept partial scope grants (e.g., if Gmail API is not yet enabled)
@@ -44,9 +45,10 @@ def get_google_credentials() -> Credentials:
     """
     Obtain valid Google OAuth 2.0 credentials.
 
-    On first run, this will open a browser window for the user to grant
-    consent. The resulting token is saved to TOKEN_PATH for future use.
-    On subsequent runs, the saved token is loaded and refreshed if expired.
+    Credential loading priority:
+      1. GOOGLE_TOKEN_JSON env var (for serverless deployment, e.g. Vercel)
+      2. token.json file on disk (for local development)
+      3. Full OAuth browser flow (first-run only, local dev)
 
     Returns:
         google.oauth2.credentials.Credentials: Valid credentials object.
@@ -57,8 +59,19 @@ def get_google_credentials() -> Credentials:
     """
     creds = None
 
-    # Try to load existing token
-    if os.path.exists(TOKEN_PATH):
+    # Priority 1: Load from GOOGLE_TOKEN_JSON env var (Vercel / serverless)
+    token_json_str = os.getenv("GOOGLE_TOKEN_JSON")
+    if token_json_str:
+        try:
+            token_data = json.loads(token_json_str)
+            creds = Credentials.from_authorized_user_info(token_data, ALL_SCOPES)
+            logger.info("Loaded token from GOOGLE_TOKEN_JSON env var")
+        except Exception as e:
+            logger.warning("Failed to load token from GOOGLE_TOKEN_JSON env var: %s", e)
+            creds = None
+
+    # Priority 2: Load from token file on disk (local dev)
+    if not creds and os.path.exists(TOKEN_PATH):
         try:
             creds = Credentials.from_authorized_user_file(TOKEN_PATH, ALL_SCOPES)
             logger.info("Loaded existing token from %s", TOKEN_PATH)

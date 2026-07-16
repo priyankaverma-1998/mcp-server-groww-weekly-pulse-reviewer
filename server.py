@@ -49,6 +49,7 @@ logger = logging.getLogger(__name__)
 # ---------------------------------------------------------------------------
 mcp = FastMCP(
     "google-workspace-mcp",
+    stateless_http=True,
     instructions=(
         "MCP server that provides Gmail and Google Docs tools. "
         "Send/draft emails and append content to Google Docs."
