@@ -66,8 +66,7 @@ def get_google_credentials() -> Credentials:
             creds = Credentials.from_authorized_user_info(token_info, ALL_SCOPES)
             logger.info("Loaded token from GOOGLE_TOKEN_JSON environment variable")
         except Exception as e:
-            logger.warning("Failed to load token from GOOGLE_TOKEN_JSON: %s", e)
-            creds = None
+            raise RuntimeError(f"Failed to load token from GOOGLE_TOKEN_JSON. Error: {e}")
             
     # Fallback to loading from file if env var is not present
     if not creds and os.path.exists(TOKEN_PATH):
